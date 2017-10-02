@@ -1,0 +1,26 @@
+{
+  "name": "choo-websocket",
+  "version": "0.1.0",
+  "description": "Small wraper around WebSocket browser API, for choo apps",
+  "main": "index.js",
+  "scripts": {
+    "test": "standard --verbose | snazzy",
+    "start": "node example/server.js"
+  },
+  "keywords": [
+    "websocket",
+    "web",
+    "socket",
+    "choo"
+  ],
+  "author": "Yerko Palma",
+  "license": "MIT",
+  "devDependencies": {
+    "choo": "^6.1.0",
+    "fastify": "^0.29.0",
+    "fastify-bankai": "^0.3.1",
+    "snazzy": "^7.0.0",
+    "standard": "^10.0.3",
+    "ws": "^3.2.0"
+  }
+}
