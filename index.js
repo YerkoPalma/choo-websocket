@@ -1,4 +1,6 @@
 /* global WebSocket */
+var assert = require('assert')
+
 module.exports = websocket
 
 var events = websocket.events = {
@@ -16,9 +18,13 @@ function websocket (route, opts) {
   }
   route = route || window.location.host
   opts = opts || {}
-  // TODO: assert options
+  assert.equal(typeof name, 'string', 'choo-websocket: route should be type string')
+  assert.equal(typeof opts, 'object', 'choo-websocket: opts should be type object')
 
   return function (state, emitter) {
+    assert.equal(typeof state, 'object', 'choo-websocket: state should be type object')
+    assert.equal(typeof emitter, 'object', 'choo-websocket: emitter should be type object')
+
     var socket = null
     try {
       socket = new WebSocket(`${opts.secure ? 'wss' : 'ws'}://${route}`)
@@ -29,8 +35,8 @@ function websocket (route, opts) {
         socket.close(code, reason)
       })
       socket.addEventListener('open', function (event) {
-        const { binaryType, bufferedAmount, extensions, protocol, state, url } = socket
-        state.socket = { binaryType, bufferedAmount, extensions, protocol, state, url }
+        const { binaryType, bufferedAmount, extensions, protocol, readyState, url } = socket
+        state.socket = { binaryType, bufferedAmount, extensions, protocol, state: readyState, url }
         emitter.emit(events.OPEN, event)
       })
       socket.addEventListener('close', function (event) {
