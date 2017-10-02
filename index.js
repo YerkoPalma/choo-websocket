@@ -29,6 +29,8 @@ function websocket (route, opts) {
         socket.close(code, reason)
       })
       socket.addEventListener('open', function (event) {
+        const { binaryType, bufferedAmount, extensions, protocol, state, url } = socket
+        state.socket = { binaryType, bufferedAmount, extensions, protocol, state, url }
         emitter.emit(events.OPEN, event)
       })
       socket.addEventListener('close', function (event) {

@@ -26,7 +26,10 @@ function mainView (state, emit) {
 
 function live (state, emitter) {
   emitter.on('DOMContentLoaded', function () {
-    emitter.on('ws:open', () => console.log('Connection stablished'))
+    emitter.on('ws:open', () => {
+      console.log('Connection stablished')
+      console.log(JSON.stringify(state.socket, null, 2))
+    })
     emitter.on('ws:message', (data, event) => {
       var msgElement = document.getElementById('results')
       msgElement.textContent = msgElement.textContent + data + '\n'
