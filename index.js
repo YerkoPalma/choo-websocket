@@ -27,7 +27,7 @@ function websocket (route, opts) {
 
     var socket = null
     try {
-      socket = new WebSocket(`${opts.secure ? 'wss' : 'ws'}://${route}`)
+      socket = new WebSocket(`${opts.secure ? 'wss' : 'ws'}://${route}`, opts.protocols ? opts.protocols : '')
       emitter.on(events.CLOSE, function (code, reason) {
         // default close code is 1000
         // https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent#Status_codes
