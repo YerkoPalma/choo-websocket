@@ -2,7 +2,7 @@
 [![npm version][2]][3] [![build status][4]][5]
 [![downloads][8]][9] [![js-standard-style][10]][11]
 
-Small wraper around [WebSocket][WebSocket] browser API, for choo apps
+Small wrapper around [WebSocket][WebSocket] browser API, for choo apps
 
 ## Usage
 ```js
@@ -33,7 +33,7 @@ function mainView (state, emit) {
 function live (state, emitter) {
   emitter.on('DOMContentLoaded', function () {
     emitter.on('ws:open', () => {
-      console.log('Connection stablished')
+      console.log('Connection established')
     })
     emitter.on('ws:message', (data, event) => {
       var msgElement = document.getElementById('results')
@@ -48,11 +48,11 @@ function live (state, emitter) {
 Emitted if the WebSocket constructor or any of its methods throws an exception
 
 ### `ws:open` | `ws.events.OPEN`
-Emitted when the connection is stablished and the `readyState` property of the 
+Emitted when the connection is established and the `readyState` property of the 
 `socket` changes to `OPEN`
 
 ### `ws:close` | `ws.events.CLOSE`
-Emitted when the connection is close and the `readyState` property of the 
+Emitted when the connection is closed and the `readyState` property of the 
 `socket` changes to `CLOSED`
 
 ### `ws:send` | `ws.events.SEND`
@@ -64,9 +64,9 @@ Listen to this event to get messages from the socket
 ## API
 ### `plugin = ws([route], [opts])`
 
-The plugin accept two optional parameters. You can pass the `route` for the 
-web socket, default to `window.location.host`. Notice that you don't need to 
-specify the `ws` protocol. Also you can pass some options as a second argument
+The plugin accepts two optional parameters. You can pass the `route` for the 
+web socket, which defaults to `window.location.host`. Notice that you don't need to 
+specify the `ws` protocol. Also you can pass some options as a second argument.
 
 - `secure`: Boolean. Set to true if you are in a secure environment. If you mix 
 environment, it will throw on creation of the socket.
@@ -75,7 +75,7 @@ environment, it will throw on creation of the socket.
 If the object is correctly created, then you have a socket object in the state 
 of your app with the following properties:
 
-- `binaryType`: A string describing the binary type of the transmited data. 
+- `binaryType`: A string describing the binary type of the transmitted data. 
 Either `'blob'` or `'arraybuffer'`.
 - `bufferedAmount`: The number of bytes of data that have been queued but not 
 yet transmitted to the network.
