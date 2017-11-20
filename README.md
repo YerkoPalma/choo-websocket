@@ -85,6 +85,10 @@ selected.
 - `state`: The current state of the connection.
 - `url`: The URL as resolved by the constructor.
 
+## See Also
+
+- [choo-sse][choo-sse] - Small wrapper around server-sent event browser API, for choo apps.
+
 ## License
 [MIT](/LICENSE)
 
@@ -101,3 +105,4 @@ selected.
 [10]: https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square
 [11]: https://github.com/feross/standard
 [WebSocket]: https://developer.mozilla.org/en-US/docs/Web/API/WebSocket
+[choo-sse]: https://github.com/YerkoPalma/choo-sse
