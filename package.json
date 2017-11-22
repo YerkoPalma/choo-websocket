@@ -1,6 +1,6 @@
 {
   "name": "choo-websocket",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Small wraper around WebSocket browser API, for choo apps",
   "main": "index.js",
   "scripts": {
