@@ -18,7 +18,7 @@ function websocket (route, opts) {
   }
   route = route || window.location.host
   opts = opts || {}
-  assert.equal(typeof name, 'string', 'choo-websocket: route should be type string')
+  assert.equal(typeof route, 'string', 'choo-websocket: route should be type string')
   assert.equal(typeof opts, 'object', 'choo-websocket: opts should be type object')
 
   return function (state, emitter) {
@@ -27,7 +27,7 @@ function websocket (route, opts) {
 
     var socket = null
     try {
-      socket = new WebSocket(`${opts.secure ? 'wss' : 'ws'}://${route}`, opts.protocols ? opts.protocols : '')
+      socket = new WebSocket(`${opts.secure ? 'wss' : 'ws'}://${route}`, opts.protocols ? opts.protocols : undefined)
       emitter.on(events.CLOSE, function (code, reason) {
         // default close code is 1000
         // https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent#Status_codes
