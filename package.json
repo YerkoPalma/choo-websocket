@@ -18,6 +18,7 @@
   "license": "MIT",
   "devDependencies": {
     "choo": "^6.1.0",
+    "choo-devtools": "^2.3.2",
     "fastify": "^0.29.0",
     "fastify-bankai": "^0.3.1",
     "snazzy": "^7.0.0",

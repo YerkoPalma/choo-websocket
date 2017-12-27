@@ -3,48 +3,46 @@ var html = require('choo/html')
 
 var app = choo()
 app.use(require('..')({ secure: true }))
+app.use(require('choo-devtools')())
 app.use(live)
 
-app.route('/', mainView)
-app.route('/private', privateView)
+app.route('/', makeView('default'))
+app.route('/private', makeView('private'))
 app.mount('body')
 
-function mainView (state, emit) {
-  return html`
-    <body>
-      <pre id="results"></pre>
-      <p>Send something through sockets:</p>
-      <input id="message" />
-      <button onclick=${onclick}>Send</button>
-      </br>
-      <a href="/private">go private</a>
-    </body>
-  `
+function makeView (id) {
+  return function (state, emit) {
+    return html`
+      <body>
+        <pre id="results-${id}"></pre>
+        <p>Send something through sockets:</p>
+        <input id="message" />
+        <button onclick=${onclick}>Send</button>
+        <a href="/private">go private</a>
+      </body>
+    `
 
-  function onclick () {
-    emit('ws:send', document.getElementById('message').value)
-    document.getElementById('message').value = ''
+    function onclick () {
+      emit('ws:send', { data: document.getElementById('message').value, id })
+      document.getElementById('message').value = ''
+    }
   }
 }
 
 function live (state, emitter) {
   emitter.on('DOMContentLoaded', function () {
-    emitter.emit('ws:add-socket', {
-      route: window.location.host + '/private',
-      opts: { secure: true }
+    emitter.emit('ws:add-socket', window.location.host + '/private', { secure: true }, 'private')
+    emitter.on('ws:open', (e, id) => {
+      console.log('Connection stablished to socket ' + id)
     })
-    emitter.on('ws:open', () => {
-      console.log('Connection stablished')
-      console.log(JSON.stringify(state.socket, null, 2))
-    })
-    emitter.on('ws:message', (data, event) => {
-      var msgElement = document.getElementById('results')
+    emitter.on('ws:message', ({ data, event, id }) => {
+      var msgElement = document.getElementById('results-' + id)
       msgElement.textContent = msgElement.textContent + data + '\n'
     })
   })
 
-  emitter.on('ws:error', err => {
+  emitter.on('ws:error', (err, id) => {
+    console.error('Error on socket ' + id)
     console.error(err)
   })
-  window.onunload = event => emitter.emit('ws:close')
 }
