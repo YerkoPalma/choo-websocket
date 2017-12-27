@@ -8,6 +8,7 @@ var events = websocket.events = {
   CLOSE: 'ws:close',
   SEND: 'ws:send',
   MESSAGE: 'ws:message',
+  ADD_SOCKET: 'ws:add-socket',
   ERROR: 'ws:error'
 }
 
@@ -25,31 +26,40 @@ function websocket (route, opts) {
     assert.equal(typeof state, 'object', 'choo-websocket: state should be type object')
     assert.equal(typeof emitter, 'object', 'choo-websocket: emitter should be type object')
 
-    var socket = null
-    try {
-      socket = new WebSocket(`${opts.secure ? 'wss' : 'ws'}://${route}`, opts.protocols ? opts.protocols : undefined)
-      emitter.on(events.CLOSE, function (code, reason) {
-        // default close code is 1000
-        // https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent#Status_codes
-        code = code || 1000
-        socket.close(code, reason)
-      })
-      socket.addEventListener('open', function (event) {
-        const { binaryType, bufferedAmount, extensions, protocol, readyState, url } = socket
-        state.socket = { binaryType, bufferedAmount, extensions, protocol, state: readyState, url }
-        emitter.emit(events.OPEN, event)
-      })
-      socket.addEventListener('close', function (event) {
-        emitter.emit(events.CLOSE, event)
-      })
-      socket.addEventListener('message', function (event) {
-        emitter.emit(events.MESSAGE, event.data, event)
-      })
-      emitter.on(events.SEND, function (data) {
-        socket.send(data)
-      })
-    } catch (e) {
-      emitter.emit(events.ERROR, e)
-    }
+    state.sockets = {}
+    createWebSocket(state, emitter, route, opts, 'default')
+    emitter.on(events.CLOSE, function (code, reason, id) {
+      // default close code is 1000
+      // https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent#Status_codes
+      code = code || 1000
+      state.sockets[id || 'default'].close(code, reason)
+    })
+    emitter.on(events.SEND, function ({ data, id }) {
+      state.sockets[id || 'default'].send(data)
+    })
+    emitter.on(events.ADD_SOCKET, function (route, opts) {
+      createWebSocket(state, emitter, route, opts)
+    })
+  }
+}
+
+function createWebSocket (state, emitter, route, opts, id) {
+  var socket = null
+  id = id || (new Date() % 9e6).toString(36)
+  try {
+    socket = new WebSocket(`${opts.secure ? 'wss' : 'ws'}://${route}`, opts.protocols ? opts.protocols : undefined)
+    socket.addEventListener('open', function (event) {
+      state.sockets[id] = socket
+      emitter.emit(events.OPEN, event)
+    })
+    socket.addEventListener('close', function (event) {
+      emitter.emit(events.CLOSE, event)
+    })
+    socket.addEventListener('message', function (event) {
+      emitter.emit(events.MESSAGE, event.data, event)
+    })
+    return id
+  } catch (e) {
+    emitter.emit(events.ERROR, e)
   }
 }

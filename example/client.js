@@ -6,6 +6,7 @@ app.use(require('..')({ secure: true }))
 app.use(live)
 
 app.route('/', mainView)
+app.route('/private', privateView)
 app.mount('body')
 
 function mainView (state, emit) {
@@ -15,6 +16,8 @@ function mainView (state, emit) {
       <p>Send something through sockets:</p>
       <input id="message" />
       <button onclick=${onclick}>Send</button>
+      </br>
+      <a href="/private">go private</a>
     </body>
   `
 
@@ -26,6 +29,10 @@ function mainView (state, emit) {
 
 function live (state, emitter) {
   emitter.on('DOMContentLoaded', function () {
+    emitter.emit('ws:add-socket', {
+      route: window.location.host + '/private',
+      opts: { secure: true }
+    })
     emitter.on('ws:open', () => {
       console.log('Connection stablished')
       console.log(JSON.stringify(state.socket, null, 2))
