@@ -61,12 +61,19 @@ Emitted to send a message through the socket
 ### `ws:message` | `ws.events.MESSAGE`
 Listen to this event to get messages from the socket
 
-## API
-### `plugin = ws([route], [opts])`
+### `ws:add-socket` | `ws.events.ADD_SOCKET`
+Add a socket. Accept a route, an options object and an optional id, if you pass 
+a route of an existing socket it will override it. If you don't pass any id, 
+it will create a random string as id. This id is used to identify the WebSocket 
+instance in the app state and to emit and listen for events only to specific 
+instances.
 
-The plugin accepts two optional parameters. You can pass the `route` for the 
-web socket, which defaults to `window.location.host`. Notice that you don't need to 
-specify the `ws` protocol. Also you can pass some options as a second argument.
+## API
+### `plugin = ws([route], [opts], [id])`
+
+The plugin accepts three optional parameters. You can pass the `route` for the 
+web socket, which defaults to `window.location.host`. Notice that you don't need 
+to specify the `ws` protocol. Also you can pass some options as a second argument.
 
 - `secure`: Boolean. Set to true if you are in a secure environment. If you mix 
 environment, it will throw on creation of the socket.

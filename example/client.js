@@ -23,7 +23,8 @@ function makeView (id) {
     `
 
     function onclick () {
-      emit('ws:send', { data: document.getElementById('message').value, id })
+      emit('ws:send', document.getElementById('message').value, id)
+      console.log('sending to ' + id)
       document.getElementById('message').value = ''
     }
   }
@@ -35,7 +36,7 @@ function live (state, emitter) {
     emitter.on('ws:open', (e, id) => {
       console.log('Connection stablished to socket ' + id)
     })
-    emitter.on('ws:message', ({ data, event, id }) => {
+    emitter.on('ws:message', (data, event, id) => {
       var msgElement = document.getElementById('results-' + id)
       msgElement.textContent = msgElement.textContent + data + '\n'
     })

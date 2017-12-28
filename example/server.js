@@ -15,6 +15,7 @@ fastify.io.on('connection', (socket, req) => {
   socket.on('message', data => {
     // Broadcast to everyone else
     fastify.io.clients.forEach(client => {
+      console.log(socket.url, client.url)
       if (socket.url === client.url && client.readyState === WebSocket.OPEN) {
         client.send(data)
       }

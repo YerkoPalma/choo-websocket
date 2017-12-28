@@ -34,7 +34,8 @@ function websocket (route, opts) {
       code = code || 1000
       state.sockets[id || 'default'].close(code, reason)
     })
-    emitter.on(events.SEND, function ({ data, id }) {
+    emitter.on(events.SEND, function (data, id) {
+      console.log(data)
       state.sockets[id || 'default'].send(data)
     })
     emitter.on(events.ADD_SOCKET, function (route, opts, id) {
@@ -50,13 +51,13 @@ function createWebSocket (state, emitter, route, opts, id) {
     socket = new WebSocket(`${opts.secure ? 'wss' : 'ws'}://${route}`, opts.protocols ? opts.protocols : undefined)
     socket.addEventListener('open', function (event) {
       state.sockets[id] = socket
-      emitter.emit(events.OPEN, { event, id })
+      emitter.emit(events.OPEN, event, id)
     })
     socket.addEventListener('close', function (event) {
-      emitter.emit(events.CLOSE, { event, id })
+      emitter.emit(events.CLOSE, event, id)
     })
     socket.addEventListener('message', function (event) {
-      emitter.emit(events.MESSAGE, { data: event.data, event, id })
+      emitter.emit(events.MESSAGE, event.data, event, id)
     })
     return id
   } catch (e) {
