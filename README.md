@@ -45,31 +45,48 @@ function live (state, emitter) {
 
 ## Events
 ### `ws:error` | `ws.events.ERROR`
-Emitted if the WebSocket constructor or any of its methods throws an exception
+Emitted if the WebSocket constructor or any of its methods throws an exception.
 
 ### `ws:open` | `ws.events.OPEN`
 Emitted when the connection is established and the `readyState` property of the 
-`socket` changes to `OPEN`
+`socket` changes to `OPEN`. You should only _listen_ to this method, since the 
+constructor and the `add-socket` event silently open sockets for you. This event 
+handler will get two arguments, the `event` object, and the `id` of the socket 
+that got opened, you can use that id to directly access to the socket through 
+`state.sockets[id]` or passing it to events like `send` and `close`. If you don't 
+pass the id, it will asume the default socket (the one created when the plugin got 
+registered).
 
 ### `ws:close` | `ws.events.CLOSE`
 Emitted when the connection is closed and the `readyState` property of the 
-`socket` changes to `CLOSED`
+`socket` changes to `CLOSED`. When you listen to this, handler will take two 
+arguments, the `event` object and the socket `id`. When you emit this, it will 
+take three arguments the `code` for the close, the `reason` string and the `id` 
+of the socket you want to close. If you don't pass the id, it will asume the 
+default socket (the one created when the plugin got registered).
 
 ### `ws:send` | `ws.events.SEND`
-Emitted to send a message through the socket
+Emitted to send a message through the socket. Emit this event passing the data 
+you want to send, and an optional `id` as reference of the socket that you want 
+to send the message.
 
 ### `ws:message` | `ws.events.MESSAGE`
-Listen to this event to get messages from the socket
+Listen to this event to get messages from the socket. The handler of this event 
+will get three arguments, the `data` sent, the whole `evet` and the `id` of the 
+socket that got the message.
 
 ### `ws:add-socket` | `ws.events.ADD_SOCKET`
-Add a socket. Accept a route, an options object and an optional id, if you pass 
+Add a socket. Accept a `route`, an `options` object and an optional `id`, if you pass 
 a route of an existing socket it will override it. If you don't pass any id, 
 it will create a random string as id. This id is used to identify the WebSocket 
 instance in the app state and to emit and listen for events only to specific 
-instances.
+instances. Keep in mind that this is agnostic to the server side implementation, so 
+its up to you to handle different websockets from server. 
+In the example folder, there is a simple implementation of _rooms_ using the [ws][ws]
+module. Some other libraries like [socket.io][socket.io] has this concept built in.
 
 ## API
-### `plugin = ws([route], [opts], [id])`
+### `plugin = ws([route], [opts])`
 
 The plugin accepts three optional parameters. You can pass the `route` for the 
 web socket, which defaults to `window.location.host`. Notice that you don't need 
@@ -79,18 +96,8 @@ to specify the `ws` protocol. Also you can pass some options as a second argumen
 environment, it will throw on creation of the socket.
 - `protocols`: Array or String. Use it to specify sub protocols for the socket.
 
-If the object is correctly created, then you have a socket object in the state 
-of your app with the following properties:
-
-- `binaryType`: A string describing the binary type of the transmitted data. 
-Either `'blob'` or `'arraybuffer'`.
-- `bufferedAmount`: The number of bytes of data that have been queued but not 
-yet transmitted to the network.
-- `extensions`: The extensions selected by the server.
-- `protocol`: A string indicating the name of the sub-protocol the server 
-selected.
-- `state`: The current state of the connection.
-- `url`: The URL as resolved by the constructor.
+If the object is correctly created, then you have a sockets object where every 
+propertie is a key to the WebSocket instance that you added.
 
 ## See Also
 
@@ -113,3 +120,5 @@ selected.
 [11]: https://github.com/feross/standard
 [WebSocket]: https://developer.mozilla.org/en-US/docs/Web/API/WebSocket
 [choo-sse]: https://github.com/YerkoPalma/choo-sse
+[ws]: https://github.com/websockets/ws
+[socket.io]: https://github.com/socketio/socket.io/
